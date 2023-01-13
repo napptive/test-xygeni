@@ -71,7 +71,7 @@ jobs:
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
-          command: 'deps --format=json'
+          command: 'deps -d /app --format=json'
   xygeni-scan:
     name: Xygeni Scan
     needs: build
