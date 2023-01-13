@@ -17,7 +17,7 @@
 package commands
 
 import (
-	"github.com/napptive/go-template/internal/app/dummy"
+	"github.com/napptive/test-xygeni/internal/app/dummy"
 	"github.com/spf13/cobra"
 )
 

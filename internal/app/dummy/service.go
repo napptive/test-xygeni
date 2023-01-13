@@ -23,7 +23,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/napptive/go-template/internal/pkg/config"
+	"github.com/napptive/test-xygeni/internal/pkg/config"
 
 	"github.com/rs/zerolog/log"
 )
