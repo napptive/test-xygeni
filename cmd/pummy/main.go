@@ -17,7 +17,7 @@
 package main
 
 import (
-	"github.com/napptive/go-template/cmd/pummy/commands"
+	"github.com/napptive/test-xygeni/cmd/pummy/commands"
 )
 
 // Version of the command

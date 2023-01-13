@@ -1,8 +1,7 @@
 name: Publish latest component version
 
-on:
-  push:
-    branches: [main]
+on: workflow_dispatch
+
 env:
   GOPRIVATE: "github.com/napptive/*"
   GH_NAPP_USER: ${{ secrets.GH_NAPP_USER }}
@@ -10,11 +9,11 @@ env:
 jobs:
   build:
     name: Push docker images
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Set up Go 1.x
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ^1.16
 
@@ -22,10 +21,10 @@ jobs:
         run: git config --global url."https://${GH_NAPP_USER}:${GH_NAPP_TOKEN}@github.com".insteadOf "https://github.com"
 
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Docker Login
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{secrets.DOCKER_HUB_USER}}
           password: ${{secrets.DOCKER_HUB_TOKEN}}
@@ -36,27 +35,52 @@ jobs:
           VERSION: latest
           TARGET_DOCKER_REGISTRY: napptive
 
-  # security Job, checks vulnerabilities      
+  # security Job, checks vulnerabilities
   security-scan:
     name: Scan vulnerabilities
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
 
-    - name: Get Repo name
-      id: name
-      run: echo "::set-output name=name::${GITHUB_REPOSITORY}"
+      - name: Get Repo name
+        id: name
+        run: echo "name=${GITHUB_REPOSITORY}" >> $GITHUB_OUTPUT
 
-    # Scan vulnerabilities with tivy
-    - name: Vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: '${{ steps.name.outputs.name }}:latest'
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
-        
-  
+      # Scan vulnerabilities with tivy
+      - name: Vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ steps.name.outputs.name }}:latest'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+  xygeni-dep-test:
+    needs: build
+    runs-on: ubuntu-latest
+    name: xygeni-github-action
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Xygeni-Scanner
+        uses: xygeni/xygeni-action@v2.0
+        id: Xygeni-Scanner
+        with:
+          token: ${{ secrets.XYGENI_TOKEN }}
+          command: 'deps --format=json'
+  xygeni-scan:
+    name: Xygeni Scan
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Xygeni-Scanner
+        uses: xygeni/xygeni-action@v2.0
+        id: Xygeni-Scanner
+        with:
+          token: ${{ secrets.XYGENI_TOKEN }}

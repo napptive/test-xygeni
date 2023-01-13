@@ -10,23 +10,23 @@ env:
 jobs:
   gh:
     name: Create GitHub Release Asset
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Set up Go 1.x
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
-          go-version: ^1.15
+          go-version: ^1.16
         id: go
 
       - name: Configure git for private modules
         run: git config --global url."https://${GH_NAPP_USER}:${GH_NAPP_TOKEN}@github.com".insteadOf "https://github.com"
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
+        run: echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
       - name: Make release
         id: make_release
@@ -60,28 +60,28 @@ jobs:
 
   docker:
     name: Push Docker Release Images
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     needs: gh
     steps:
       - name: Set up Go 1.x
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
-          go-version: ^1.15
+          go-version: ^1.16
         id: go
 
       - name: Configure git for private modules
         run: git config --global url."https://${GH_NAPP_USER}:${GH_NAPP_TOKEN}@github.com".insteadOf "https://github.com"
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get the version
         id: get_version
         run: echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
 
       - name: Docker login
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{secrets.DOCKER_HUB_USER}}
           password: ${{secrets.DOCKER_HUB_TOKEN}}

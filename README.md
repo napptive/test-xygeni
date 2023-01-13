@@ -37,11 +37,11 @@ brew install gnu-sed
 
 This template is integrated with GitHub Actions.
 
-![Check changes in the Main branch](https://github.com/napptive/go-template/workflows/Check%20changes%20in%20the%20Main%20branch/badge.svg)
+![Check changes in the Main branch](https://github.com/napptive/test-xygeni/workflows/Check%20changes%20in%20the%20Main%20branch/badge.svg)
 
 ## License
 
- Copyright 2020 Napptive
+ Copyright 2023 Napptive
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
